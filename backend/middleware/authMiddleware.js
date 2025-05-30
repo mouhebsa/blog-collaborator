@@ -16,34 +16,29 @@ const protect = async (req, res, next) => {
       req.user = await User.findById(decoded.id).select("-password");
 
       if (!req.user) {
-        res.status(401);
-        throw new Error("Not authorized, user not found");
+        res.status(401).send("Not authorized, user not found");
       }
 
       next();
     } catch (error) {
       console.error(error);
-      res.status(401);
-      if (error.name === "TokenExpiredError") {
-        throw new Error("Not authorized, token expired");
-      }
-      throw new Error("Not authorized, token failed");
+      res.status(401).send(error.message);
     }
   }
 
   if (!token) {
-    res.status(401);
-    throw new Error("Not authorized, no token");
+    res.status(401).send("Not authorized, user not found");
   }
 };
 
 const authorize = (allowedRoles) => {
   return (req, res, next) => {
     if (!req.user || !req.user.roles) {
-      res.status(403);
-      throw new Error(
-        "User roles not available. Ensure protect middleware runs first."
-      );
+      res
+        .status(403)
+        .send(
+          "User roles not available. Ensure protect middleware runs first."
+        );
     }
 
     const hasRequiredRole = req.user.roles.some((role) =>
@@ -53,8 +48,7 @@ const authorize = (allowedRoles) => {
     if (hasRequiredRole) {
       next();
     } else {
-      res.status(403);
-      throw new Error("User role not authorized");
+      res.status(403).send("User role not authorized");
     }
   };
 };

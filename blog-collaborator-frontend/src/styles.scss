@@ -63,9 +63,17 @@ nav ul li button:hover {
 }
 
 nav ul li a.active-link {
-  background-color: #007bff;
+  background-color: #10b981;
   color: white;
-  border-color: #0056b3;
+  border-color: #10b981;
+  &:hover {
+    background-color: #059669;
+    border-color: #059669;
+  }
+}
+
+.p-select-overlay  {
+  width: 100%;
 }
 
 nav ul li button {
