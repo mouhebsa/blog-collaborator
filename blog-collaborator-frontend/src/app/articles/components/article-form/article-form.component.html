@@ -1,0 +1,77 @@
+<div class="article-form-container">
+  <h2>{{ editMode ? "Modifier l'article" : "Créer un nouvel article" }}</h2>
+
+  <form [formGroup]="articleForm" (ngSubmit)="onSubmit()">
+    <div class="p-fluid p-formgrid p-grid">
+      <div class="p-field p-col-12">
+        <label for="title">Titre</label>
+        <input id="title" type="text" pInputText formControlName="title" />
+        <small
+          *ngIf="
+            articleForm.get('title')?.invalid &&
+            articleForm.get('title')?.touched
+          "
+          class="p-error"
+        >
+          Le titre est requis.
+        </small>
+      </div>
+
+      <div class="p-field p-col-12">
+        <label for="content">Contenu</label>
+        <textarea
+          id="content"
+          pInputTextarea
+          formControlName="content"
+          rows="5"
+        ></textarea>
+        <small
+          *ngIf="
+            articleForm.get('content')?.invalid &&
+            articleForm.get('content')?.touched
+          "
+          class="p-error"
+        >
+          Le contenu est requis.
+        </small>
+      </div>
+
+      <div class="p-field p-col-12 p-md-6">
+        <label for="image">URL de l'image (Optionnel)</label>
+        <input id="image" type="text" pInputText formControlName="image" />
+      </div>
+
+      <div class="p-field p-col-12 p-md-6">
+        <label for="tags">Tags (Optionnel)</label>
+        <p-multiSelect
+          id="tags"
+          [options]="availableTags"
+          formControlName="tags"
+          placeholder="Sélectionnez ou ajoutez des tags"
+          [filter]="true"
+          appendTo="body"
+        ></p-multiSelect>
+      </div>
+    </div>
+
+    <div class="p-mt-3">
+      <p-button
+        type="submit"
+        [label]="editMode ? 'Mettre à jour' : 'Créer'"
+        styleClass="p-button-success p-mr-2"
+        [disabled]="articleForm.invalid || submitting"
+      ></p-button>
+      <p-button
+        type="button"
+        label="Annuler"
+        styleClass="p-button-secondary"
+        (click)="goBack()"
+        [disabled]="submitting"
+      ></p-button>
+    </div>
+
+    <div *ngIf="errorMessage" class="p-mt-3 p-error">
+      {{ errorMessage }}
+    </div>
+  </form>
+</div>

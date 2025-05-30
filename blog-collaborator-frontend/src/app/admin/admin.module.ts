@@ -4,12 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AdminRoutingModule } from './admin-routing.module';
 import { UserListComponent } from './components/user-list/user-list.component';
 
-
 @NgModule({
-  imports: [
-    CommonModule,
-    AdminRoutingModule,
-    UserListComponent,
-  ]
+  imports: [AdminRoutingModule, UserListComponent],
 })
-export class AdminModule { }
+export class AdminModule {}

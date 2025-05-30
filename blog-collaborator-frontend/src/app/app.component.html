@@ -5,13 +5,27 @@
       <li><a routerLink="/home" routerLinkActive="active-link">Home</a></li>
 
       <ng-container *ngIf="!(isLoggedIn$ | async)">
-        <li><a routerLink="/auth/login" routerLinkActive="active-link">Login</a></li>
-        <li><a routerLink="/auth/register" routerLinkActive="active-link">Register</a></li>
+        <li>
+          <a routerLink="/auth/login" routerLinkActive="active-link">Login</a>
+        </li>
+        <li>
+          <a routerLink="/auth/register" routerLinkActive="active-link"
+            >Register</a
+          >
+        </li>
       </ng-container>
 
       <ng-container *ngIf="isLoggedIn$ | async">
+        <li>
+          <a routerLink="/articles" routerLinkActive="active-link"
+            >Gestion des articles</a
+          >
+        </li>
+
         <li *ngIf="isAdmin$ | async">
-          <a routerLink="/admin" routerLinkActive="active-link">Admin Dashboard</a>
+          <a routerLink="/admin" routerLinkActive="active-link"
+            >Admin Dashboard</a
+          >
         </li>
         <li>
           <button (click)="logout()">Logout</button>
