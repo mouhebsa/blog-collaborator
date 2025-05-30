@@ -1,1 +1,173 @@
-/* You can add global styles to this file, and also import other style files */
+html, body {
+  height: 100%;
+}
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+main.container {
+  flex-grow: 1;
+}
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+header {
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.5em;
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+nav ul li {
+  padding: 0;
+  margin-left: 10px;
+}
+
+nav ul li a,
+nav ul li button {
+  display: block;
+  padding: 8px 15px;
+  text-decoration: none;
+  color: white;
+  background: none;
+  border: 1px solid transparent;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+nav ul li a:hover,
+nav ul li button:hover {
+  background-color: #555;
+  border-color: #777;
+}
+
+nav ul li a.active-link {
+  background-color: #007bff;
+  color: white;
+  border-color: #0056b3;
+}
+
+nav ul li button {
+  background-color: #dc3545;
+  color: white;
+  border: 1px solid #c82333;
+}
+
+nav ul li button:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+main.container {
+  padding: 20px;
+  background-color: white;
+  margin: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+  text-align: center;
+  background-color: #333;
+  color: white;
+  width: 100%;
+  margin-top: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  width: calc(100% - 22px);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+button,
+.button {
+  padding: 10px 15px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+button:hover,
+.button:hover {
+  background-color: #0056b3;
+}
+
+button:disabled,
+.button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  text-align: center;
+}
+
+.success-message {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  text-align: center;
+}

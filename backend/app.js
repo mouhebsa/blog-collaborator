@@ -1,13 +1,22 @@
-var express = require("express");
-var app = express();
-var bodyParser = require("body-parser");
-var mongoose = require("mongoose");
-var port = 3000;
-var db = "mongodb://localhost:27017/blog-collaborator";
+const express = require("express");
+const app = express();
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const port = 3000;
+const db = "mongodb://localhost:27017/blog-collaborator";
 const dotenv = require("dotenv");
+const cors = require("cors");
+
 dotenv.config();
-var authRoutes = require("./routes/authRoutes");
-var userRoutes = require("./routes/userRoutes");
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+
+app.use(
+  cors({
+    origin: "http://localhost:4200",
+    credentials: true,
+  })
+);
 
 mongoose
   .connect(db, {
