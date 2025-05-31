@@ -1,23 +1,42 @@
+
 .home-container {
-  padding: 30px 20px;
-  text-align: center;
-  background-color: #fff;
-  border-radius: 5px;
+  padding: 20px;
+}
 
-  h2 {
-    color: #007bff;
-    margin-bottom: 15px;
-  }
+.welcome-message {
+  font-style: italic;
+  color: #555;
+}
 
-  p {
-    font-size: 1.1em;
-    color: #555;
-    line-height: 1.6;
-  }
+.article-card {
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
 
-  .welcome-message {
-    margin-top: 20px;
-    font-size: 1.2em;
-    font-weight: bold;
-  }
+.article-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.card-title {
+  color: #333;
+}
+
+.card-img-top-placeholder {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.card-footer {
+  background-color: #f8f9fa;
+}
+.no-articles img {
+  opacity: 0.8;
+}
+
+.no-articles h4 {
+  margin-top: 1rem;
+}
+
+.badge {
+  font-size: 0.75rem;
 }

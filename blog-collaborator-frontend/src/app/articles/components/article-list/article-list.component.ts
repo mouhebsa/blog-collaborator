@@ -7,14 +7,14 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { Article } from '../../models/article.interface';
 import { ArticleService } from '../../services/article.service';
-import { NgIf, SlicePipe } from '@angular/common';
+import { SlicePipe } from '@angular/common';
 
 @Component({
   selector: 'app-article-list',
   templateUrl: './article-list.component.html',
   styleUrls: ['./article-list.component.scss'],
   standalone: true,
-  imports: [ButtonModule, TableModule, SlicePipe, NgIf],
+  imports: [ButtonModule, TableModule, SlicePipe],
 })
 export class ArticleListComponent implements OnInit {
   articles: Article[] = [];

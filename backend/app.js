@@ -11,6 +11,7 @@ dotenv.config();
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const articleRoutes = require("./routes/articleRoutes");
+const commentRoutes = require("./routes/commentRoutes");
 
 app.use(
   cors({
@@ -42,6 +43,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/articles", articleRoutes);
+app.use("/api/comments", commentRoutes);
 
 app.get("/", function (req, res) {
   console.log("app starting on port: " + port);

@@ -157,7 +157,7 @@ export class ArticleFormComponent implements OnInit {
 
     if (!this.editMode) {
       if (this.currentUser?._id) {
-        articleData.author._id = this.currentUser._id;
+        articleData.author = this.currentUser;
       } else {
         this.errorMessage =
           "ID utilisateur non trouvé. Impossible de définir l'auteur.";

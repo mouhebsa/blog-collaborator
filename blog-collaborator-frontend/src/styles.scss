@@ -6,7 +6,7 @@ app-root {
   flex-direction: column;
   min-height: 100%;
 }
-main.container {
+main.container-app {
   flex-grow: 1;
 }
 body {
@@ -87,7 +87,7 @@ nav ul li button:hover {
   border-color: #bd2130;
 }
 
-main.container {
+main.container-app {
   padding: 20px;
   background-color: white;
   margin: 20px;
