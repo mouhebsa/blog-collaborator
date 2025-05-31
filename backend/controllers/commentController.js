@@ -1,5 +1,7 @@
 const Comment = require("../models/comment");
 const Article = require("../models/article");
+const { createNotification } = require("../controllers/notificationController");
+const webSocketService = require("../wss/WebSocketService");
 
 // @desc    Create a new comment or reply
 // @route   POST /api/comments
@@ -32,27 +34,79 @@ const createComment = async (req, res) => {
         return res.status(404).json({ message: "Parent comment not found" });
       }
       if (parentExists.article.toString() !== articleId) {
-        return res
-          .status(400)
-          .json({
-            message: "Parent comment does not belong to the specified article",
-          });
+        return res.status(400).json({
+          message: "Parent comment does not belong to the specified article",
+        });
       }
       commentData.parentComment = parentCommentId;
     }
 
     let newComment = await Comment.create(commentData);
-    newComment = await newComment.populate("author", "username email"); // Populate author details
+    newComment = await newComment.populate("author", "username email");
+
+    try {
+      const commenterUsername = req.user.username || "A user";
+
+      if (!parentCommentId) {
+        const article = await Article.findById(articleId);
+        if (article && article.author.toString() !== req.user.id) {
+          const notificationData = {
+            user: article.author,
+            article: articleId,
+            comment: newComment._id,
+            type: "new_comment",
+            message: `${commenterUsername} commented on your article: "${article.title}"`,
+          };
+          const newNotification = await createNotification(notificationData);
+          if (newNotification) {
+            webSocketService.sendNotificationToUser(
+              article.author.toString(),
+              newNotification
+            );
+          }
+        }
+      } else {
+        const parentComment = await Comment.findById(parentCommentId).populate(
+          "author",
+          "username"
+        );
+        if (
+          parentComment &&
+          parentComment.author._id.toString() !== req.user.id
+        ) {
+          const article = await Article.findById(parentComment.article);
+          const articleTitle = article ? article.title : "an article";
+
+          const notificationData = {
+            user: parentComment.author._id,
+            article: parentComment.article,
+            comment: newComment._id,
+            type: "new_reply",
+            message: `${commenterUsername} replied to your comment on "${articleTitle}"`,
+          };
+          const newNotification = await createNotification(notificationData);
+          if (newNotification) {
+            webSocketService.sendNotificationToUser(
+              parentComment.author._id.toString(),
+              newNotification
+            );
+          }
+        }
+      }
+    } catch (notificationError) {
+      console.error(
+        "Error creating or sending notification:",
+        notificationError
+      );
+    }
 
     res.status(201).json(newComment);
   } catch (error) {
     console.error("Error creating comment:", error);
-    res
-      .status(500)
-      .json({
-        message: "Server error while creating comment",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Server error while creating comment",
+      error: error.message,
+    });
   }
 };
 
@@ -94,12 +148,10 @@ const updateComment = async (req, res) => {
     res.status(200).json(populatedComment);
   } catch (error) {
     console.error("Error updating comment:", error);
-    res
-      .status(500)
-      .json({
-        message: "Server error while updating comment",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Server error while updating comment",
+      error: error.message,
+    });
   }
 };
 
@@ -126,7 +178,7 @@ const deleteComment = async (req, res) => {
     const deleteRepliesRecursive = async (parentId) => {
       const replies = await Comment.find({ parentComment: parentId });
       for (const reply of replies) {
-        await deleteRepliesRecursive(reply._id); // Recursively delete children of this reply
+        await deleteRepliesRecursive(reply._id);
         await Comment.findByIdAndDelete(reply._id);
       }
     };
@@ -140,12 +192,10 @@ const deleteComment = async (req, res) => {
       .json({ message: "Comment and its replies deleted successfully" });
   } catch (error) {
     console.error("Error deleting comment:", error);
-    res
-      .status(500)
-      .json({
-        message: "Server error while deleting comment",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Server error while deleting comment",
+      error: error.message,
+    });
   }
 };
 
@@ -191,12 +241,10 @@ const getCommentsByArticle = async (req, res) => {
     res.status(200).json(nestedComments);
   } catch (error) {
     console.error("Error fetching comments:", error);
-    res
-      .status(500)
-      .json({
-        message: "Server error while fetching comments",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Server error while fetching comments",
+      error: error.message,
+    });
   }
 };
 

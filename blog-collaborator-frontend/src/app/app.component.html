@@ -1,3 +1,6 @@
+<!-- app.component.html -->
+<p-toast></p-toast>
+
 <header>
   <h1>{{ title }}</h1>
   <nav>
@@ -27,6 +30,22 @@
             >Admin Dashboard</a
           >
         </li>
+        <li class="notification-bell-item">
+          <p-button
+            type="button"
+            icon="pi pi-bell"
+            class="p-button-rounded p-button-text notification-bell-button"
+            (click)="toggleNotificationPopover($event)"
+            pBadge
+            [value]="(unreadCount$ | async) || ''"
+            [severity]="
+              (unreadCount$ | async) && (unreadCount$ | async)! > 0
+                ? 'danger'
+                : null
+            "
+          >
+          </p-button>
+        </li>
         <li>
           <button (click)="logout()">Logout</button>
         </li>
@@ -40,5 +59,7 @@
 </main>
 
 <footer>
-  <p>© 2023 Blog Collaborator Platform</p>
+  <p>© 2025 Blog Collaborator Platform</p>
 </footer>
+
+<app-notification-popover #notificationPopover></app-notification-popover>
