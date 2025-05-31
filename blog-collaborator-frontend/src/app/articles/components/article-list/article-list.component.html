@@ -11,7 +11,7 @@
     ></p-button>
   </div>
 
-  <p-table #dt [value]="articles" [loading]="loading" [responsive]="true">
+  <p-table #dt [value]="articles" [loading]="loading">
     <ng-template pTemplate="header">
       <tr>
         <th>Titre</th>
@@ -25,24 +25,27 @@
         <td>{{ article.title }}</td>
         <td>{{ article.content | slice : 0 : 100 }}...</td>
         <td>{{ article.tags?.join(", ") }}</td>
+        @if(canEdit(article) || canDelete()) {
         <td>
           <div class="button-actions">
+            @if (canEdit(article)) {
             <p-button
               type="button"
               icon="pi pi-pencil"
               styleClass="p-button-info p-mr-2"
               (click)="editArticle(article)"
-              [disabled]="!canEdit(article)"
             ></p-button>
+            } @if(canDelete()) {
             <p-button
               type="button"
               icon="pi pi-trash"
               styleClass="p-button-danger"
               (click)="deleteArticle(article)"
-              *ngIf="canDelete()"
             ></p-button>
+            }
           </div>
         </td>
+        }
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">

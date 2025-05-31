@@ -119,7 +119,7 @@ export class ArticleFormComponent implements OnInit {
     }
     if (
       roles.includes(UserRole.Redactor) &&
-      article.authorId === this.currentUser._id
+      article?.author?._id === this.currentUser?._id
     ) {
       return true;
     }
@@ -157,7 +157,7 @@ export class ArticleFormComponent implements OnInit {
 
     if (!this.editMode) {
       if (this.currentUser?._id) {
-        articleData.authorId = this.currentUser._id;
+        articleData.author._id = this.currentUser._id;
       } else {
         this.errorMessage =
           "ID utilisateur non trouvé. Impossible de définir l'auteur.";

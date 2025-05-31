@@ -4,7 +4,7 @@ export interface Article {
   content: string;
   image?: string;
   tags?: string[];
-  authorId?: string;
+  author?: any;
   createdAt?: Date;
   updatedAt?: Date;
 }

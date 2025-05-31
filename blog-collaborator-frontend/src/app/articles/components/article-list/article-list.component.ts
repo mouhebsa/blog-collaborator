@@ -65,12 +65,13 @@ export class ArticleListComponent implements OnInit {
     if (!this.currentUser) return false;
 
     const roles = this.currentUser.roles;
+
     if (roles.includes(UserRole.Admin) || roles.includes(UserRole.Editor)) {
       return true;
     }
     if (
       roles.includes(UserRole.Redactor) &&
-      article.authorId === this.currentUser._id
+      article?.author?._id === this.currentUser?._id
     ) {
       return true;
     }
