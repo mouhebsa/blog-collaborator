@@ -1,0 +1,252 @@
+<div class="article-detail-container">
+  <div *ngIf="isLoading" class="loading-indicator">
+    <p>Loading article...</p>
+  </div>
+
+  <p-message
+    *ngIf="error"
+    severity="error"
+    [text]="error"
+    class="w-full mb-3"
+  ></p-message>
+
+  <div *ngIf="!isLoading && !error && article" class="article-content">
+    <header>
+      <h1>{{ article.title }}</h1>
+      <p class="meta">
+        By
+        <span *ngIf="article.author?.username; else anonymousAuthor"
+          >{{ article.author.username }}</span
+        >
+        <ng-template #anonymousAuthor>Anonymous</ng-template>
+        on <span>{{ article.createdAt | date: 'longDate' }}</span>
+      </p>
+    </header>
+    <hr />
+
+    <div *ngIf="article.image" class="article-image-container mb-3">
+      <img
+        [src]="article.image"
+        [alt]="article.title"
+        class="article-image"
+        style="
+          max-width: 100%;
+          height: auto;
+          object-fit: contain;
+          border-radius: 8px;
+        "
+      />
+    </div>
+    <div *ngIf="!article.image" class="article-image-container mb-3">
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png"
+        alt="No articles illustration"
+        class="article-image"
+        style="
+          max-width: 100%;
+          height: auto;
+          object-fit: contain;
+          border-radius: 8px;
+        "
+      />
+    </div>
+    <section class="content-body" [innerHTML]="article.content"></section>
+
+    <div
+      *ngIf="article.tags && article.tags.length > 0"
+      class="tags-section mt-3"
+    >
+      <strong>Tags:</strong>
+      <span
+        *ngFor="let tag of article.tags"
+        class="tag p-tag p-tag-rounded mr-2"
+        >{{ tag }}</span
+      >
+    </div>
+
+    <footer>
+      <p *ngIf="article.updatedAt && article.updatedAt !== article.createdAt">
+        Last updated on: {{ article.updatedAt | date: 'longDate' }}
+      </p>
+    </footer>
+  </div>
+
+  <div *ngIf="!article && !isLoading && !error" class="no-article">
+    <p>Article not found.</p>
+  </div>
+
+  <section
+    class="comments-section mt-4"
+    *ngIf="article && !isLoading && !error"
+  >
+    <hr />
+    <h2>Comments</h2>
+
+    <div
+      class="comment-form-container mt-3"
+      *ngIf="authService.isAuthenticated(); else loginToComment"
+    >
+      <form (ngSubmit)="submitComment()" class="p-fluid">
+        <div class="field">
+          <label for="commentText"
+            >{{ replyingToCommentId ? 'Your Reply:' : 'Leave a Comment:'
+            }}</label
+          >
+          <textarea
+            id="commentText"
+            name="commentText"
+            [(ngModel)]="newCommentText"
+            rows="3"
+            pInputTextarea
+            required
+            [placeholder]="replyingToCommentId ? 'Write your reply here...' : 'Share your thoughts...'"
+          ></textarea>
+        </div>
+
+        <p-message
+          *ngIf="commentError || deleteCommentError"
+          severity="error"
+          [text]="commentError ?? deleteCommentError ?? undefined"
+          class="w-full mt-2"
+        ></p-message>
+
+        <div class="form-actions mt-2">
+          <p-button
+            type="submit"
+            label="{{ replyingToCommentId ? (isSubmittingComment ? 'Posting Reply...' : 'Post Reply') : (isSubmittingComment ? 'Posting Comment...' : 'Post Comment') }}"
+            [disabled]="!newCommentText.trim() || isSubmittingComment"
+            [loading]="isSubmittingComment"
+            class="p-button-primary"
+          ></p-button>
+
+          <p-button
+            *ngIf="replyingToCommentId"
+            type="button"
+            label="Cancel Reply"
+            (click)="cancelReply()"
+            [disabled]="isSubmittingComment"
+            class="ml-2"
+            severity="info"
+          ></p-button>
+        </div>
+      </form>
+    </div>
+
+    <ng-template #loginToComment>
+      <p class="login-prompt mt-3">
+        Please
+        <a
+          routerLink="/auth/login"
+          [queryParams]="{ returnUrl: route.snapshot.url.join('/') }"
+          >log in</a
+        >
+        to leave a comment or reply.
+      </p>
+    </ng-template>
+
+    <div
+      class="comment-list mt-3"
+      *ngIf="comments && comments.length > 0; else noComments"
+    >
+      <ng-container
+        *ngTemplateOutlet="commentTree; context: { commentList: comments, level: 0 }"
+      ></ng-container>
+    </div>
+
+    <ng-template #noComments>
+      <p>No comments yet. Be the first to comment!</p>
+    </ng-template>
+  </section>
+</div>
+
+<ng-template #commentTree let-commentList="commentList" let-level="level">
+  <div
+    *ngFor="let comment of commentList"
+    class="comment-item mt-2"
+    [style.margin-left.px]="level * 20"
+  >
+    <div class="comment-header mb-1">
+      <strong>{{ comment.author?.username || 'Anonymous' }}</strong>
+      <span class="comment-date text-sm text-muted ml-2"
+        >{{ comment.createdAt | date: 'short' }}</span
+      >
+    </div>
+
+    <div class="comment-body">
+      <p *ngIf="editingCommentId !== comment._id">{{ comment.text }}</p>
+
+      <div *ngIf="editingCommentId === comment._id" class="edit-comment-form">
+        <textarea
+          [(ngModel)]="editedCommentText"
+          name="editedCommentText_{{ comment._id }}"
+          rows="3"
+          pInputTextarea
+          class="mb-2 w-full"
+        ></textarea>
+
+        <p-message
+          *ngIf="updateCommentError"
+          severity="error"
+          [text]="updateCommentError"
+          class="w-full mb-2"
+        ></p-message>
+
+        <div class="form-actions">
+          <p-button
+            label="Save"
+            (click)="saveEditComment(comment)"
+            [disabled]="isUpdatingComment || !editedCommentText.trim()"
+            [loading]="isUpdatingComment"
+            class="p-button-primary"
+          ></p-button>
+
+          <p-button
+            label="Cancel"
+            (click)="cancelEditComment()"
+            [disabled]="isUpdatingComment"
+            class="p-button-secondary ml-2"
+            severity="info"
+          ></p-button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="comment-actions mt-2"
+      *ngIf="editingCommentId !== comment._id && authService.isAuthenticated()"
+    >
+      <p-button
+        class="p-button-text"
+        label="Reply"
+        (click)="startReply(comment._id)"
+      ></p-button>
+
+      <p-button
+        *ngIf="canEditOrDelete(comment.author?._id)"
+        class="pl-2"
+        label="Edit"
+        (click)="startEditComment(comment)"
+        [disabled]="isDeletingCommentId === comment._id"
+        severity="info"
+      ></p-button>
+
+      <p-button
+        *ngIf="canEditOrDelete(comment.author?._id)"
+        class="pl-2"
+        label="{{ isDeletingCommentId === comment._id ? 'Deleting...' : 'Delete' }}"
+        (click)="confirmDeleteComment(comment)"
+        [disabled]="isDeletingCommentId === comment._id"
+        severity="danger"
+      ></p-button>
+    </div>
+
+    <div
+      *ngIf="comment.replies?.length > 0 && editingCommentId !== comment._id"
+      class="comment-replies"
+    >
+      <ng-container
+        *ngTemplateOutlet="commentTree; context: { commentList: comment.replies, level: level + 1 }"
+      ></ng-container>
+    </div>
+  </div>
+</ng-template>
