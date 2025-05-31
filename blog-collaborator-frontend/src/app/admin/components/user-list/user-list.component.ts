@@ -5,7 +5,7 @@ import { TableModule } from 'primeng/table';
 import { ChipModule } from 'primeng/chip';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { BehaviorSubject, Observable, Subscription, take } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
@@ -18,7 +18,7 @@ import { AuthService } from '../../../auth/services/auth.service';
     ChipModule,
     ButtonModule,
     DialogModule,
-    DropdownModule,
+    SelectModule,
     FormsModule,
     AsyncPipe,
   ],
