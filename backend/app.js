@@ -10,6 +10,12 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const webSocketService = require("./wss/WebSocketService");
 
+const {
+  generalLimiter,
+  authLimiter,
+  createContentLimiter,
+} = require("./middleware/rateLimiter");
+
 dotenv.config();
 
 const server = http.createServer(app);
@@ -100,11 +106,11 @@ app.use(
   })
 );
 
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/articles", articleRoutes);
-app.use("/api/comments", commentRoutes);
-app.use("/api/notifications", notificationRoutes);
+app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/users", generalLimiter, userRoutes);
+app.use("/api/articles", createContentLimiter, articleRoutes);
+app.use("/api/comments", createContentLimiter, commentRoutes);
+app.use("/api/notifications", generalLimiter, notificationRoutes);
 
 app.get("/", function (req, res) {
   console.log("app starting on port: " + port);
